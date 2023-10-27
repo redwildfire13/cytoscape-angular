@@ -1,0 +1,79 @@
+<form [formGroup]="formGroup" [title]="formInfo?.title" (ngSubmit)="onSubmit()">
+  <ng-container *ngFor="let fieldSetInfo of formInfo.fieldsets">
+    <p-fieldset
+      *ngIf="model && fieldSetInfo.showFieldsetForModel(model)"
+      class="fieldset"
+      legend="{{ fieldSetInfo.legend }}"
+    >
+      <div class="ui-g ui-fluid">
+        <div
+          class="ui-g-12 ui-md-4 field"
+          *ngFor="let fieldInfo of fieldSetInfo.fieldInfos"
+        >
+          <div class="ui-inputgroup">
+            <ng-container *ngIf="fieldInfo.fieldType(model) === 'boolean'">
+              <span class="ui-chkbox-label">
+                {{ fieldInfo.label }}
+              </span>
+              <p-inputSwitch
+                name="{{ fieldInfo.modelProperty }}"
+                pTooltip="{{ fieldInfo.tooltip }}"
+                formControlName="{{ fieldInfo.modelProperty }}"
+              >
+              </p-inputSwitch>
+            </ng-container>
+            <ng-container
+              *ngIf="
+                fieldInfo.fieldType(model) === 'string' ||
+                fieldInfo.fieldType(model) === 'number'
+              "
+            >
+              <span class="ui-float-label">
+                <input
+                  pInputText
+                  id="{{ fieldInfo.modelProperty }}"
+                  name="{{ fieldInfo.modelProperty }}"
+                  formControlName="{{ fieldInfo.modelProperty }}"
+                  [pTooltip]="fieldInfo.tooltip"
+                  [type]="fieldInfo.inputType"
+                  [size]="fieldInfo.inputSize"
+                />
+                <label for="{{ fieldInfo.modelProperty }}">{{
+                  fieldInfo.label
+                }}</label>
+              </span>
+            </ng-container>
+            <ng-container
+              *ngIf="
+                fieldInfo.fieldType(model) === 'options' &&
+                fieldInfo.options &&
+                fieldInfo.optionArrayLabelField
+              "
+            >
+              <span class="ui-float-label">
+                <p-dropdown
+                  formControlName="{{ fieldInfo.modelProperty }}"
+                  [name]="fieldInfo.modelProperty"
+                  [options]="fieldInfo.options"
+                  [optionLabel]="fieldInfo.optionArrayLabelField"
+                  [pTooltip]="fieldInfo.tooltip"
+                ></p-dropdown>
+                <label for="{{ fieldInfo.modelProperty }}">{{
+                  fieldInfo.label
+                }}</label>
+              </span>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </p-fieldset>
+  </ng-container>
+</form>
+<button
+  *ngIf="formInfo.showSubmitButton"
+  pButton
+  [disabled]="formInfo.disableSubmitOnFormInvalid && !formGroup.valid"
+  (submit)="onSubmit()"
+>
+  {{ formInfo.submitText || "Submit" }}
+</button>

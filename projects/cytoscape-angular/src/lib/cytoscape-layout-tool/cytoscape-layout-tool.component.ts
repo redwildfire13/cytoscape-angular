@@ -9,13 +9,21 @@ import {
   OnInit,
   Output,
   SimpleChanges,
-  ViewChild
-} from '@angular/core'
-import { LayoutOptions } from 'cytoscape'
-import { BreadthFirstLayoutOptionsImpl, CircleLayoutOptionsImpl, ConcentricLayoutOptionsImpl, CoseLayoutOptionsImpl,
-  DagreLayoutOptionsImpl, GridLayoutOptionsImpl, NullLayoutOptionsImpl, PresetLayoutOptionsImpl, RandomLayoutOptionsImpl
-} from '../layout/layout-options-impl'
-import { FieldInfo, FieldsetInfo, FormInfo } from '../fluid-form/form-info'
+  ViewChild,
+} from '@angular/core';
+import { LayoutOptions } from 'cytoscape';
+import {
+  BreadthFirstLayoutOptionsImpl,
+  CircleLayoutOptionsImpl,
+  ConcentricLayoutOptionsImpl,
+  CoseLayoutOptionsImpl,
+  DagreLayoutOptionsImpl,
+  GridLayoutOptionsImpl,
+  NullLayoutOptionsImpl,
+  PresetLayoutOptionsImpl,
+  RandomLayoutOptionsImpl,
+} from '../layout/layout-options-impl';
+import { FieldInfo, FieldsetInfo, FormInfo } from '../fluid-form/form-info';
 
 @Component({
   selector: 'cytoscape-layout-tool',
@@ -36,43 +44,59 @@ import { FieldInfo, FieldsetInfo, FormInfo } from '../fluid-form/form-info'
       }
 
       input:disabled {
-        background-color: rgba(204, 204, 204, .33);
+        background-color: rgba(204, 204, 204, 0.33);
       }
-    `
+    `,
   ],
   template: `
     <div>
       <div style="display: flex;">
         <div class="layout-header">Edit Layout</div>
       </div>
-      <p-dropdown class="layout-dropdown"
+      <p-dropdown
+        class="layout-dropdown"
         name="selectedLayoutInfo"
         [options]="layoutOptionsList"
         [(ngModel)]="layoutOptions"
         optionLabel="name"
-        (ngModelChange)="onLayoutModelChange()">
-      ></p-dropdown>
-      <button class="apply-button" pButton label="Apply" [disabled]="!changed" (click)="onApplyLayout()"></button>
+        (ngModelChange)="onLayoutModelChange()"
+      >
+        ></p-dropdown
+      >
+      <button
+        class="apply-button"
+        pButton
+        label="Apply"
+        [disabled]="!changed"
+        (click)="onApplyLayout()"
+      ></button>
     </div>
-    <cyng-fluid-form [model]="layoutOptions" [formInfo]="formInfo" (modelChange)="onFormModelChange()"></cyng-fluid-form>
-  `})
+    <cyng-fluid-form
+      [model]="layoutOptions"
+      [formInfo]="formInfo"
+      (modelChange)="onFormModelChange()"
+    ></cyng-fluid-form>
+  `,
+})
 export class CytoscapeLayoutToolComponent implements OnInit, OnChanges {
-  private static LAYOUT_FORM_INFO: FormInfo = CytoscapeLayoutToolComponent.createLayoutFormInfo()
+  private static LAYOUT_FORM_INFO: FormInfo =
+    CytoscapeLayoutToolComponent.createLayoutFormInfo();
 
   @ViewChild('layoutForm') layoutForm;
 
-  _layoutOptions: any
-  changed = false
+  _layoutOptions: any;
+  changed = false;
 
   @Input()
   get layoutOptions(): any {
-    return this._layoutOptions
+    return this._layoutOptions;
   }
   set layoutOptions(value) {
-    console.log(`set layoutOptions: ${value?.name}`)
-    this._layoutOptions = value
+    console.log(`set layoutOptions: ${value?.name}`);
+    this._layoutOptions = value;
   }
-  @Output() layoutOptionsChange: EventEmitter<LayoutOptions> = new EventEmitter<LayoutOptions>()
+  @Output() layoutOptionsChange: EventEmitter<LayoutOptions> =
+    new EventEmitter<LayoutOptions>();
 
   public layoutOptionsList: LayoutOptions[] = [
     new BreadthFirstLayoutOptionsImpl(),
@@ -84,155 +108,413 @@ export class CytoscapeLayoutToolComponent implements OnInit, OnChanges {
     new PresetLayoutOptionsImpl(),
     new RandomLayoutOptionsImpl(),
     new NullLayoutOptionsImpl(),
-  ]
+  ];
 
-  formInfo: FormInfo
+  formInfo!: FormInfo;
 
-  constructor() {
-  }
+  constructor() {}
 
   ngOnInit(): void {
-    this.formInfo = CytoscapeLayoutToolComponent.createLayoutFormInfo()
-    let layoutOptionsSelect = this.layoutOptionsList[5]
-    console.log('setting the initial selected layout, default: ', layoutOptionsSelect.name)
+    this.formInfo = CytoscapeLayoutToolComponent.createLayoutFormInfo();
+    let layoutOptionsSelect = this.layoutOptionsList[5];
+    console.log(
+      'setting the initial selected layout, default: ',
+      layoutOptionsSelect.name
+    );
     if (this.layoutOptions) {
-      console.log(`setting  the initial selected layout based on input/output layout ${JSON.stringify(this.layoutOptions)}`)
-      this.addOrReplaceInLayoutOptionsList(this.layoutOptions)
+      console.log(
+        `setting  the initial selected layout based on input/output layout ${JSON.stringify(
+          this.layoutOptions
+        )}`
+      );
+      this.addOrReplaceInLayoutOptionsList(this.layoutOptions);
     }
-    console.log('Initializing this.selectedLayoutInfo with layoutOptionsSelect ', JSON.stringify(layoutOptionsSelect))
+    console.log(
+      'Initializing this.selectedLayoutInfo with layoutOptionsSelect ',
+      JSON.stringify(layoutOptionsSelect)
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('ngOnChanges layout changes:', JSON.stringify(changes))
+    console.log('ngOnChanges layout changes:', JSON.stringify(changes));
     if (changes['layoutOptions']) {
-
     }
   }
 
   onLayoutModelChange() {
-    console.log('Layout model change: ', JSON.stringify(this.layoutOptions))
-    this.changed = true
+    console.log('Layout model change: ', JSON.stringify(this.layoutOptions));
+    this.changed = true;
   }
 
   onFormModelChange() {
-    console.log('onFormModelChange')
-    this.changed = true
+    console.log('onFormModelChange');
+    this.changed = true;
   }
 
   onApplyLayout() {
-    this.changed = false
-    this.layoutOptionsChange.emit(this.layoutOptions)
+    this.changed = false;
+    this.layoutOptionsChange.emit(this.layoutOptions);
   }
 
   private addOrReplaceInLayoutOptionsList(layoutOptions: LayoutOptions): void {
-    let matchingOptions = this.layoutOptionsList.find(selectOption => selectOption.name === layoutOptions.name)
+    let matchingOptions = this.layoutOptionsList.find(
+      (selectOption) => selectOption.name === layoutOptions.name
+    );
     if (matchingOptions) {
-      console.log('got matching layoutOptions: ', JSON.stringify(matchingOptions))
-      this.layoutOptionsList.splice(this.layoutOptionsList.indexOf(matchingOptions), 1, layoutOptions)
+      console.log(
+        'got matching layoutOptions: ',
+        JSON.stringify(matchingOptions)
+      );
+      this.layoutOptionsList.splice(
+        this.layoutOptionsList.indexOf(matchingOptions),
+        1,
+        layoutOptions
+      );
     } else {
-      console.info(`Did you pass a new kind of layout?  The layout name ${name} was not found, adding a new one to the top of the list.`)
-      this.layoutOptionsList.unshift(layoutOptions)
+      console.info(
+        `Did you pass a new kind of layout?  The layout name ${name} was not found, adding a new one to the top of the list.`
+      );
+      this.layoutOptionsList.unshift(layoutOptions);
     }
   }
 
   private static createLayoutFormInfo(): FormInfo {
-      let fit = new FieldInfo('Fit', 'fit', 'boolean', 'Whether to fit to viewport')
-      let padding = new FieldInfo('Padding', 'padding', 'number','When fit to viewport, padding inside the viewport.')
+    let fit = new FieldInfo(
+      'Fit',
+      'fit',
+      'boolean',
+      'Whether to fit to viewport'
+    );
+    let padding = new FieldInfo(
+      'Padding',
+      'padding',
+      'number',
+      'When fit to viewport, padding inside the viewport.'
+    );
 
-      let fitFieldset = new FieldsetInfo('Fit', [
-        fit, padding
-      ], ['fit'])
+    let fitFieldset = new FieldsetInfo('Fit', [fit, padding], ['fit']);
 
-      const zoom = new FieldInfo('Zoom', 'zoom', 'number','the zoom level to set (likely want fit = false if set)')
-      const pan = new FieldInfo('Pan', 'pan', 'number','the pan level to set (likely want fit = false if set)')
-      const animate = new FieldInfo('Animate', "animate", 'boolean', "whether to transition the node positions")
-      const animationDuration = new FieldInfo("Animation Duration", 'animationDuration', 'number',"duration of animation in ms if enabled")
-      const animationEasing = new FieldInfo("Animation Easing", 'animationEasing', 'number',"easing of animation if enabled")
-      let animationFieldset = new FieldsetInfo('Animation', [
-        zoom, pan, animate, animationDuration, animationEasing
-      ], ['animate'])
+    const zoom = new FieldInfo(
+      'Zoom',
+      'zoom',
+      'number',
+      'the zoom level to set (likely want fit = false if set)'
+    );
+    const pan = new FieldInfo(
+      'Pan',
+      'pan',
+      'number',
+      'the pan level to set (likely want fit = false if set)'
+    );
+    const animate = new FieldInfo(
+      'Animate',
+      'animate',
+      'boolean',
+      'whether to transition the node positions'
+    );
+    const animationDuration = new FieldInfo(
+      'Animation Duration',
+      'animationDuration',
+      'number',
+      'duration of animation in ms if enabled'
+    );
+    const animationEasing = new FieldInfo(
+      'Animation Easing',
+      'animationEasing',
+      'number',
+      'easing of animation if enabled'
+    );
+    let animationFieldset = new FieldsetInfo(
+      'Animation',
+      [zoom, pan, animate, animationDuration, animationEasing],
+      ['animate']
+    );
 
+    let avoidOverlap = new FieldInfo(
+      'Avoid Overlap',
+      'avoidOverlap',
+      'boolean',
+      'prevents node overlap, may overflow boundingBox if not enough space'
+    );
+    let spacingFactor = new FieldInfo(
+      'Spacing Factor',
+      'spacingFactor',
+      'number',
+      'Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up'
+    );
+    let nodeDimensionsIncludeLabels = new FieldInfo(
+      'Node Dimensions Include Labels',
+      'nodeDimensionsIncludeLabels',
+      'boolean',
+      'Excludes the label when calculating node bounding boxes for the layout algorithm'
+    );
+    let shapedFieldset = new FieldsetInfo(
+      'Shaped',
+      [avoidOverlap, spacingFactor, nodeDimensionsIncludeLabels],
+      ['avoidOverlap']
+    );
 
-      let avoidOverlap = new FieldInfo('Avoid Overlap', 'avoidOverlap', 'boolean','prevents node overlap, may overflow boundingBox if not enough space')
-      let spacingFactor = new FieldInfo('Spacing Factor', 'spacingFactor', 'number','Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up')
-      let nodeDimensionsIncludeLabels = new FieldInfo('Node Dimensions Include Labels', 'nodeDimensionsIncludeLabels', 'boolean', 'Excludes the label when calculating node bounding boxes for the layout algorithm')
-      let shapedFieldset = new FieldsetInfo('Shaped', [
-        avoidOverlap, spacingFactor, nodeDimensionsIncludeLabels
-      ], ['avoidOverlap'])
+    let directed = new FieldInfo(
+      'Directed',
+      'breadthFirst',
+      'boolean',
+      'whether the tree is breadthFirst downwards (or edges can point in any direction if false)'
+    );
+    let circle = new FieldInfo(
+      'Circle',
+      'circle',
+      'boolean',
+      'put depths in concentric circles if true, put depths top down if false'
+    );
+    let maximalAdjustments = new FieldInfo(
+      'Maximal Adjustments',
+      'maximalAdjustments',
+      'number',
+      'how many times to try to position the nodes in a maximal way (i.e. no backtracking)'
+    );
+    let maximal = new FieldInfo(
+      'Maximal',
+      'maximal',
+      'boolean',
+      'whether to shift nodes down their natural BFS depths in order to avoid upwards edges (DAGS only)'
+    );
+    let grid = new FieldInfo(
+      'Grid',
+      'grid',
+      'boolean',
+      'whether to shift nodes down their natural BFS depths in order to avoid upwards edges (DAGS only)'
+    );
+    let roots = new FieldInfo(
+      'Roots',
+      'roots',
+      'string',
+      'the roots of the trees'
+    );
+    let breadthFirstFieldset = new FieldsetInfo(
+      'Breadth First',
+      [directed, circle, maximalAdjustments, maximal, grid, roots],
+      ['breadthFirst']
+    );
 
-      let directed = new FieldInfo('Directed', 'breadthFirst', 'boolean', 'whether the tree is breadthFirst downwards (or edges can point in any direction if false)')
-      let circle = new FieldInfo('Circle', 'circle', 'boolean','put depths in concentric circles if true, put depths top down if false')
-      let maximalAdjustments = new FieldInfo('Maximal Adjustments', 'maximalAdjustments', 'number', 'how many times to try to position the nodes in a maximal way (i.e. no backtracking)')
-      let maximal = new FieldInfo('Maximal', 'maximal', 'boolean', 'whether to shift nodes down their natural BFS depths in order to avoid upwards edges (DAGS only)')
-      let grid = new FieldInfo('Grid', 'grid', 'boolean', 'whether to shift nodes down their natural BFS depths in order to avoid upwards edges (DAGS only)')
-      let roots = new FieldInfo('Roots', 'roots', 'string', 'the roots of the trees')
-      let breadthFirstFieldset = new FieldsetInfo('Breadth First', [
-        directed, circle, maximalAdjustments, maximal, grid, roots
-      ], ['breadthFirst'])
+    let nodeSep = new FieldInfo(
+      'Node Separation',
+      'nodeSep',
+      'number',
+      'the separation between adjacent nodes in the same rank'
+    );
+    let edgeSep = new FieldInfo(
+      'Edge Separation',
+      'edgeSep',
+      'number',
+      'the separation between adjacent edges in the same rank'
+    );
+    let rankSep = new FieldInfo(
+      'Rank Separation',
+      'rankSep',
+      'number',
+      'the separation between each rank in the layout'
+    );
+    let ranker = new FieldInfo(
+      'Ranker',
+      'ranker',
+      'options',
+      'Type of algorithm to assign a rank to each node in the input graph.'
+    );
+    ranker.options = [
+      { name: '', label: '' },
+      { name: 'network-simplex', label: 'network-simplex' },
+      { name: 'tight-tree', label: 'tight-tree' },
+      { name: 'longest-path', label: 'longest-path' },
+    ];
 
-      let nodeSep = new FieldInfo('Node Separation', 'nodeSep', 'number', 'the separation between adjacent nodes in the same rank')
-      let edgeSep = new FieldInfo('Edge Separation', 'edgeSep', 'number', 'the separation between adjacent edges in the same rank')
-      let rankSep = new FieldInfo('Rank Separation', 'rankSep', 'number', 'the separation between each rank in the layout')
-      let ranker = new FieldInfo('Ranker', 'ranker', 'options', 'Type of algorithm to assign a rank to each node in the input graph.')
-      ranker.options = [
-        {name: '', label: ''},
-        {name: 'network-simplex', label: 'network-simplex'},
-        {name: 'tight-tree', label: 'tight-tree'},
-        {name: 'longest-path', label: 'longest-path'}]
+    let dagreFieldset = new FieldsetInfo(
+      'Dagre',
+      [nodeSep, edgeSep, rankSep, ranker],
+      ['nodeSep']
+    );
 
-      let dagreFieldset = new FieldsetInfo('Dagre', [
-        nodeSep, edgeSep, rankSep, ranker
-      ], ['nodeSep'])
+    let animationThreshold = new FieldInfo(
+      'Animation Threshold',
+      'animationThreshold',
+      'number',
+      'The layout animates only after this many milliseconds when animate is true (prevents flashing on fast runs)'
+    );
+    let refresh = new FieldInfo(
+      'Refresh',
+      'refresh',
+      'number',
+      'Number of iterations between consecutive screen positions update'
+    );
+    let randomize = new FieldInfo(
+      'Randomize',
+      'randomize',
+      'boolean',
+      'Randomize the initial positions of the nodes (true) or use existing positions (false)'
+    );
+    let componentSpacing = new FieldInfo(
+      'Component Spacing',
+      'componentSpacing',
+      'number',
+      'Extra spacing between components in non-compound graphs'
+    );
+    let nodeOverlap = new FieldInfo(
+      'Node Overlap',
+      'nodeOverlap',
+      'number',
+      'Node repulsion (overlapping) multiplier'
+    );
+    let nestingFactor = new FieldInfo(
+      'Nesting Factor',
+      'nestingFactor',
+      'number',
+      'Nesting factor (multiplier) to compute ideal edge length for nested edges'
+    );
+    let gravity = new FieldInfo(
+      'Gravity',
+      'gravity',
+      'number',
+      'Gravity force (constant)'
+    );
+    let numIter = new FieldInfo(
+      'Max Iterations',
+      'numIter',
+      'number',
+      'Maximum number of iterations to perform'
+    );
+    let initialTemp = new FieldInfo(
+      'Initial Temp',
+      'initialTemp',
+      'number',
+      'Initial temperature (maximum node displacement)'
+    );
+    let coolingFactor = new FieldInfo(
+      'Cooling Factor',
+      'coolingFactor',
+      'number',
+      'Cooling factor (how the temperature is reduced between consecutive iterations'
+    );
+    let minTemp = new FieldInfo(
+      'Min. Temp',
+      'minTemp',
+      'number',
+      'Lower temperature threshold (below this point the layout will end)'
+    );
+    let coseFieldset = new FieldsetInfo(
+      'COSE',
+      [
+        animationThreshold,
+        refresh,
+        randomize,
+        componentSpacing,
+        nodeOverlap,
+        nestingFactor,
+        gravity,
+        numIter,
+        initialTemp,
+        coolingFactor,
+        minTemp,
+      ],
+      ['coolingFactor']
+    );
 
-      let animationThreshold = new FieldInfo('Animation Threshold', 'animationThreshold', 'number', 'The layout animates only after this many milliseconds when animate is true (prevents flashing on fast runs)')
-      let refresh = new FieldInfo('Refresh', 'refresh', 'number',
-        'Number of iterations between consecutive screen positions update')
-      let randomize = new FieldInfo('Randomize', 'randomize', 'boolean', 'Randomize the initial positions of the nodes (true) or use existing positions (false)')
-      let componentSpacing = new FieldInfo('Component Spacing', 'componentSpacing', 'number', 'Extra spacing between components in non-compound graphs')
-      let nodeOverlap = new FieldInfo('Node Overlap', 'nodeOverlap', 'number', 'Node repulsion (overlapping) multiplier')
-      let nestingFactor = new FieldInfo('Nesting Factor', 'nestingFactor', 'number', 'Nesting factor (multiplier) to compute ideal edge length for nested edges')
-      let gravity = new FieldInfo('Gravity', 'gravity', 'number', 'Gravity force (constant)')
-      let numIter = new FieldInfo('Max Iterations', 'numIter', 'number', 'Maximum number of iterations to perform')
-      let initialTemp = new FieldInfo('Initial Temp', 'initialTemp', 'number', 'Initial temperature (maximum node displacement)')
-      let coolingFactor = new FieldInfo('Cooling Factor', 'coolingFactor', 'number', 'Cooling factor (how the temperature is reduced between consecutive iterations')
-      let minTemp = new FieldInfo('Min. Temp', 'minTemp', 'number', 'Lower temperature threshold (below this point the layout will end)')
-      let coseFieldset = new FieldsetInfo('COSE', [
-        animationThreshold, refresh, randomize, componentSpacing, nodeOverlap, nestingFactor, gravity, numIter,
-        initialTemp, coolingFactor, minTemp
-      ], ['coolingFactor'])
+    let avoidOverlapPadding = new FieldInfo(
+      'avoidOverlapPadding',
+      'avoidOverlapPadding',
+      'number',
+      'extra spacing around nodes when avoidOverlap: true'
+    );
+    let condense = new FieldInfo(
+      'condense',
+      'condense',
+      'boolean',
+      'uses all available space on false, uses minimal space on true'
+    );
+    let rows = new FieldInfo(
+      'Rows',
+      'rows',
+      'number',
+      'force num of rows in the grid'
+    );
+    let cols = new FieldInfo(
+      'Columns',
+      'cols',
+      'number',
+      'force num of columns in the grid'
+    );
 
-      let avoidOverlapPadding = new FieldInfo('avoidOverlapPadding', 'avoidOverlapPadding', 'number', 'extra spacing around nodes when avoidOverlap: true')
-      let condense = new FieldInfo('condense', 'condense', 'boolean', 'uses all available space on false, uses minimal space on true')
-      let rows = new FieldInfo('Rows', 'rows', 'number', 'force num of rows in the grid')
-      let cols = new FieldInfo('Columns', 'cols', 'number', 'force num of columns in the grid')
+    let gridFieldset = new FieldsetInfo(
+      'Grid',
+      [avoidOverlapPadding, condense, rows, cols],
+      ['cols']
+    );
 
-      let gridFieldset = new FieldsetInfo('Grid', [
-        avoidOverlapPadding, condense, rows, cols
-      ], ['cols'])
+    let radius = new FieldInfo(
+      'Radius',
+      'radius',
+      'number',
+      'the radius of the circle'
+    );
+    let startAngle = new FieldInfo(
+      'Start Angle',
+      'startAngle',
+      'number',
+      'where nodes start in radians (default:3 / 2 * Math.PI)'
+    );
+    let sweep = new FieldInfo(
+      'Sweep',
+      'sweep',
+      'number',
+      'how many radians should be between the first and last node (defaults to full circle)'
+    );
+    let clockwise = new FieldInfo(
+      'Clockwise',
+      'clockwise',
+      'number',
+      'whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)'
+    );
+    let circularFieldSet = new FieldsetInfo(
+      'Circular',
+      [radius, startAngle, sweep, clockwise],
+      ['clockwise']
+    );
 
-      let radius = new FieldInfo('Radius', 'radius', 'number', 'the radius of the circle')
-      let startAngle = new FieldInfo('Start Angle', 'startAngle', 'number', 'where nodes start in radians (default:3 / 2 * Math.PI)')
-      let sweep = new FieldInfo('Sweep', 'sweep', 'number', 'how many radians should be between the first and last node (defaults to full circle)')
-      let clockwise = new FieldInfo('Clockwise', 'clockwise', 'number', 'whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)')
-      let circularFieldSet = new FieldsetInfo('Circular', [
-        radius, startAngle, sweep, clockwise
-      ], ['clockwise'])
+    let equidistant = new FieldInfo(
+      'Equidistant',
+      'equidistant',
+      'boolean',
+      'whether levels have an equal radial distance betwen them, may cause bounding box overflow'
+    );
+    let minNodeSpacing = new FieldInfo(
+      'Min. Node Spacing',
+      'minNodeSpacing',
+      'number',
+      'min spacing between outside of nodes (used for radius adjustment)'
+    );
+    let height = new FieldInfo('Height', 'height', 'number', '');
+    let width = new FieldInfo('Width', 'width', 'number', '');
+    let concentricFieldSet = new FieldsetInfo(
+      'Concentric',
+      [equidistant, minNodeSpacing, startAngle, height, width],
+      ['equidistant']
+    );
 
-      let equidistant = new FieldInfo('Equidistant', 'equidistant', 'boolean', 'whether levels have an equal radial distance betwen them, may cause bounding box overflow')
-      let minNodeSpacing = new FieldInfo('Min. Node Spacing', 'minNodeSpacing', 'number', 'min spacing between outside of nodes (used for radius adjustment)')
-      let height = new FieldInfo('Height', 'height', 'number', '')
-      let width = new FieldInfo('Width', 'width', 'number', '')
-      let concentricFieldSet = new FieldsetInfo('Concentric', [
-        equidistant, minNodeSpacing, startAngle, height, width
-      ], ['equidistant'])
+    //boundingBox: undefined // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
 
-      //boundingBox: undefined // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-
-      return new FormInfo('Layout',
-        [
-          breadthFirstFieldset, coseFieldset, dagreFieldset, gridFieldset, circularFieldSet, concentricFieldSet,
-          fitFieldset, animationFieldset, shapedFieldset ],
-        false)
+    return new FormInfo(
+      'Layout',
+      [
+        breadthFirstFieldset,
+        coseFieldset,
+        dagreFieldset,
+        gridFieldset,
+        circularFieldSet,
+        concentricFieldSet,
+        fitFieldset,
+        animationFieldset,
+        shapedFieldset,
+      ],
+      false
+    );
   }
 }
 /*

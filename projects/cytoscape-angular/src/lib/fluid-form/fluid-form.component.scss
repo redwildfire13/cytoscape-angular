@@ -1,0 +1,16 @@
+
+    .ui-chkbox-label {
+      padding-right: 0.5em;
+    }
+
+    .ui-dropdown-label {
+      align-self: center;
+      padding-right: 0.5em
+    }
+
+    .field:nth-child(n+4) {
+        margin-top: 1em; // otherwise overlap betwen a field and a floating label of the field below it
+    }
+
+    .fieldset {
+    }

@@ -1,17 +1,10 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/app",
-    "allowJs": true,
-    "types": [],
-    "paths": { "@angular/*": [ "../node_modules/@angular/*" ] }
+    "outDir": "../../dist/out-tsc",
+    "types": []
   },
-  "files": [
-    "src/main.ts",
-    "src/polyfills.ts"
-  ],
-  "include": [
-    "src/**/*.d.ts"
-  ]
+  "files": ["src/main.ts", "src/polyfills.ts"],
+  "include": ["src/**/*.d.ts"],
+  "exclude": ["**/*.stories.ts", "**/*.stories.js", "jest.config.ts"]
 }

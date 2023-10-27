@@ -1,5 +1,13 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core'
-import * as cy from 'cytoscape'
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import * as cy from 'cytoscape';
 import {
   CytoscapeOptions,
   EdgeDefinition,
@@ -7,10 +15,10 @@ import {
   NodeDefinition,
   Position,
   SelectionType,
-  Stylesheet
-} from 'cytoscape'
+  Stylesheet,
+} from 'cytoscape';
 
-declare var cytoscape: any
+declare var cytoscape: any;
 
 /**
  * The API is a little odd to provide flexibility.
@@ -22,164 +30,173 @@ declare var cytoscape: any
 @Component({
   selector: 'cytoscape-graph',
   template: `
-    <p-progressSpinner *ngIf="loading" class="spinner" strokeWidth="4" fill="#EEEEEE" animationDuration=".5s"></p-progressSpinner>
-    <div #cyGraph class="graphWrapper">
-    </div>
+    <p-progressSpinner
+      *ngIf="loading"
+      class="spinner"
+      strokeWidth="4"
+      fill="#EEEEEE"
+      animationDuration=".5s"
+    ></p-progressSpinner>
+    <div #cyGraph class="graphWrapper"></div>
   `,
-  styles: [`
-    .spinner {
-      position: absolute;
-      left: '350px';
-      z-index: 10;
-      width: '250px';
-      height: '250px';
-    }
-    @keyframes ui-progress-spinner-color {
-      100%,
-      0% {
-        stroke: #d62d20;
+  styles: [
+    `
+      .spinner {
+        position: absolute;
+        left: '350px';
+        z-index: 10;
+        width: '250px';
+        height: '250px';
       }
-      40% {
-        stroke: #0057e7;
+      @keyframes ui-progress-spinner-color {
+        100%,
+        0% {
+          stroke: #d62d20;
+        }
+        40% {
+          stroke: #0057e7;
+        }
+        66% {
+          stroke: #008744;
+        }
+        80%,
+        90% {
+          stroke: #ffa700;
+        }
       }
-      66% {
-        stroke: #008744;
+      .graphWrapper {
+        height: 100%;
+        width: 100%;
       }
-      80%,
-      90% {
-        stroke: #ffa700;
-      }
-    }
-    .graphWrapper {
-      height: 100%;
-      width: 100%;
-    }`
-  ]
+    `,
+  ],
 })
 export class CytoscapeGraphComponent implements OnChanges {
   @ViewChild('cyGraph')
-  cyGraph: ElementRef
+  cyGraph: ElementRef | undefined;
 
   @Input()
-  debug = false
+  debug = false;
 
   @Input()
-  nodes: NodeDefinition[]
+  nodes: NodeDefinition[] | undefined;
   @Input()
-  edges: EdgeDefinition[]
+  edges: EdgeDefinition[] | undefined;
 
   @Input()
-  autolock: boolean
+  autolock: boolean | undefined;
   @Input()
-  autoungrabify: boolean
+  autoungrabify: boolean | undefined;
   @Input()
-  autounselectify: boolean
+  autounselectify: boolean | undefined;
   @Input()
-  boxSelectionEnabled: boolean
+  boxSelectionEnabled: boolean | undefined;
   @Input()
-  desktopTapThreshold: number
+  desktopTapThreshold: number | undefined;
   @Input()
-  hideEdgesOnViewport: boolean
+  hideEdgesOnViewport: boolean | undefined;
   @Input()
-  hideLabelsOnViewport: boolean
+  hideLabelsOnViewport: boolean | undefined;
   @Input()
-  layoutOptions: LayoutOptions
+  layoutOptions: LayoutOptions | undefined;
   @Input()
-  maxZoom: number
+  maxZoom: number | undefined;
   @Input()
-  minZoom: number
+  minZoom: number | undefined;
   @Input()
-  motionBlur: boolean
+  motionBlur: boolean | undefined;
   @Input()
-  motionBlurOpacity: number
+  motionBlurOpacity: number | undefined;
   @Input()
-  pan: Position
+  pan: Position | undefined;
   @Input()
-  panningEnabled: boolean
+  panningEnabled: boolean | undefined;
   @Input()
-  pixelRatio: number | 'auto'
+  pixelRatio: number | 'auto' | undefined;
   @Input()
-  selectionType: SelectionType
+  selectionType: SelectionType | undefined;
   @Input()
-  style: Stylesheet[]
+  style: Stylesheet[] | undefined;
   @Input()
-  styleEnabled: boolean
+  styleEnabled: boolean | undefined;
   @Input()
-  textureOnViewport: boolean
+  textureOnViewport: boolean | undefined;
   @Input()
-  touchTapThreshold: number
+  touchTapThreshold: number | undefined;
   @Input()
-  userPanningEnabled: boolean
+  userPanningEnabled: boolean | undefined;
   @Input()
-  userZoomingEnabled: boolean
+  userZoomingEnabled: boolean | undefined;
   @Input()
-  wheelSensitivity: number
+  wheelSensitivity: number | undefined;
   @Input()
-  zoom: 1
+  zoom: 1 | undefined;
   @Input()
-  zoomingEnabled: boolean
+  zoomingEnabled: boolean | undefined;
   @Input()
-  showToolbar = true
+  showToolbar = true;
 
-  cyOptions: CytoscapeOptions
-  private cy: cy.Core
-  loading: boolean = false
+  cyOptions: CytoscapeOptions | undefined;
+  private cy!: cy.Core;
+  loading: boolean = false;
 
-  constructor() {
-  }
+  constructor() {}
 
   public ngOnChanges(changes: SimpleChanges): any {
-    console.log('cytoscape graph component ngOnChanges. changes:', JSON.stringify(changes))
-      if (changes["style"]) {
-        console.log('changes["style"]:', JSON.stringify(changes["style"]))
-        this.runWhileLoading(this.updateStyles.bind(this))
-      }
+    console.log(
+      'cytoscape graph component ngOnChanges. changes:',
+      JSON.stringify(changes)
+    );
+    if (changes['style']) {
+      console.log('changes["style"]:', JSON.stringify(changes['style']));
+      this.runWhileLoading(this.updateStyles.bind(this));
+    }
   }
 
   public centerElements(selector) {
     if (!this.cy) {
-      return
+      return;
     }
-    const elems = this.cy.$(selector)
-    this.cy.center(elems)
+    const elems = this.cy.$(selector);
+    this.cy.center(elems);
   }
 
   public zoomToElement(selector: string, level = 3) {
-    let position = this.cy?.$(selector)?.position()
+    let position = this.cy?.$(selector)?.position();
     if (!position) {
-      console.warn(`Cannot zoom to ${selector}`)
+      console.warn(`Cannot zoom to ${selector}`);
     }
     this.cy.zoom({
       level: level,
-      position: position
+      position: position,
     });
   }
 
   public render() {
-    this.runWhileLoading(this.rerender.bind(this))
+    this.runWhileLoading(this.rerender.bind(this));
   }
 
   public runWhileLoading(f: Function) {
-    this.loading = true
-    setTimeout(()=> {
-      f()
+    this.loading = true;
+    setTimeout(() => {
+      f();
       setTimeout(() => {
-        this.loading = false
-      }, 30)
-    }, 0)
+        this.loading = false;
+      }, 30);
+    }, 0);
   }
 
   private updateStyles() {
     if (this.cy && this.style) {
-      this.cy.style(this.style)
+      this.cy.style(this.style);
     }
   }
 
   public rerender() {
     //TODO : this takes a heavy-handed approach, refine for performance
     if (!this.cyGraph) {
-      console.warn(`No cyGraph found`)
-      return
+      console.warn(`No cyGraph found`);
+      return;
     }
 
     const cyOptions = this.cyOptions || {
@@ -211,22 +228,22 @@ export class CytoscapeGraphComponent implements OnChanges {
       wheelSensitivity: this.wheelSensitivity,
       zoomingEnabled: this.zoomingEnabled,
       zoom: this.zoom,
-    }
+    };
     // TODO do reset() instead?
-    this.cy = cytoscape(cyOptions)
-    this.cy.startBatch()
-    this.cy.boxSelectionEnabled(this.boxSelectionEnabled)
-    this.cy.nodes().remove()
-    this.cy.edges().remove()
+    this.cy = cytoscape(cyOptions);
+    this.cy.startBatch();
+    this.cy.boxSelectionEnabled(this.boxSelectionEnabled);
+    this.cy.nodes().remove();
+    this.cy.edges().remove();
     if (this.nodes) {
-      this.cy.add(this.nodes)
+      this.cy.add(this.nodes);
     }
     if (this.edges) {
-      this.cy.add(this.edges)
+      this.cy.add(this.edges);
     }
-    this.cy.endBatch()
+    this.cy.endBatch();
     if (this.layoutOptions) {
-      this.cy.layout(this.layoutOptions).run()
+      this.cy.layout(this.layoutOptions).run();
     }
   }
 }

@@ -36,15 +36,10 @@
               "projects/cytoscape-angular/tsconfig.lib.json",
               "projects/cytoscape-angular/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
-    }},
-  "cli": {
-    "analytics": "be3a80a9-889b-40dd-a9f6-b0f280335b17"
-  },
-  "defaultProject": "cytoscape-angular"
+    }
+  }
 }
